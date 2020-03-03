@@ -116,7 +116,7 @@ public class Database implements AutoCloseable {
         String query = Config.getValueByKey(databaseConfiguration, "clear-profile-photos-temp");
         Log.log(Log.levels.DEBUG, "DBEXEC: " + query);
 
-        Log.log(Log.levels.INFO, "Вставка blob в таблицу запросом " + query);
+        Log.log(Log.levels.INFO, "Удаление blob из таблицы запросом " + query);
         try (PreparedStatement pstmt = connection.prepareStatement(query)) {
             Log.log(Log.levels.DEBUG, "DBEXEC-ADD-PARAM: " + profile.getId());
             pstmt.setInt(1, profile.getId());
