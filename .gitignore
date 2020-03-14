@@ -1,7 +1,4 @@
-target/
-.idea/
 tmp/
 tmpdb/
-log/
-Inet.iml
+log.d/
 xtrakt.d/

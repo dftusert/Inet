@@ -1,1 +1,0 @@
-packageSearchIndex = [{"l":"All Packages","url":"allpackages-index.html"},{"l":"com.user"},{"l":"com.user.core"},{"l":"com.user.core.dbdesc"},{"l":"com.user.core.info"},{"l":"com.user.exceptions"},{"l":"com.user.support"}]

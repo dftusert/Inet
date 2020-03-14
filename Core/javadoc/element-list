@@ -1,0 +1,7 @@
+com.user.inet
+com.user.inet.conf
+com.user.inet.core.database
+com.user.inet.core.database.entity
+com.user.inet.core.database.infocontainer
+com.user.inet.core.webdriver.collector
+com.user.inet.core.webdriver.driver

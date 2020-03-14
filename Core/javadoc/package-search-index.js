@@ -1,0 +1,1 @@
+packageSearchIndex = [{"l":"All Packages","url":"allpackages-index.html"},{"l":"com.user.inet"},{"l":"com.user.inet.conf"},{"l":"com.user.inet.core.database"},{"l":"com.user.inet.core.database.entity"},{"l":"com.user.inet.core.database.infocontainer"},{"l":"com.user.inet.core.webdriver.collector"},{"l":"com.user.inet.core.webdriver.driver"}]
