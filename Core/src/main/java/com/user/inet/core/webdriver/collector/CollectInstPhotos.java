@@ -64,6 +64,9 @@ public class CollectInstPhotos implements Collector {
             String page = driver.getConf().get("site") + '/' + profile.getPerson();
             Log.log(Log.levels.INFO, "Получение страницы: " + page);
             driver.navigate(page);
+            try {
+                Thread.sleep(Integer.parseInt(driver.getConf().get("images-load-wait-time-before-get")));
+            } catch(Exception ex) { Log.log(Log.levels.ERROR, ex.getMessage()); }
 
             Log.log(Log.levels.INFO, "Получение фотографий пользователя " + profile.getPerson());
 

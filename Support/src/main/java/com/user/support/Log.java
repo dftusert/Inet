@@ -1,9 +1,15 @@
 package com.user.support;
 
+import com.user.support.database.Database;
+import com.user.support.database.entity.Levels;
+import com.user.support.database.entity.Messages;
+import com.user.support.database.entity.Tracebacks;
+
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.security.InvalidParameterException;
+import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -58,13 +64,17 @@ public class Log {
         /**
          * Сообщения будут выводиться в файл
          */
-        FILE
+        FILE,
+        /**
+         * Сообщения будут вставляться в базу данных
+         */
+        DATABASE
     }
 
     /**
      * handler текущий вариант логгирования
      * level минимальный уровень логгирования
-     * logfile путь к файлу для логов, может быть null, содержит базовую часть имени файла
+     * logfile путь к файлу для логов или к базе данных, может быть null, содержит базовую часть имени файла
      * maxStackTraceElements максимальное количество выводимых элементов StackTrace
      */
     private handlers handler;
@@ -125,7 +135,7 @@ public class Log {
         if (handler == null)
             throw new InvalidParameterException("Задаваемый логгеру handler не существует в списке handlers");
 
-        if (handler == handlers.FILE)
+        if (handler == handlers.FILE || handler == handlers.DATABASE)
             logfile = Config.getValueByKey(config, "file");
 
         level = null;
@@ -180,18 +190,33 @@ public class Log {
 
             DateFormat time = new SimpleDateFormat("yyyy-MM-dd|HH:mm:ss:SSSSSSS");
             Calendar calendar = Calendar.getInstance();
-            time.format(calendar.getTime());
-            if(!message.equals("")) message = "[" + time.format(calendar.getTime()) + "]: " + currentLevel.name() + " : " + message + " : " + traceAppend;
+            String timestamp = time.format(calendar.getTime());
+
+            String bcpMessage = message;
+            if(!message.equals("")) message = "[" + timestamp + "]: " + currentLevel.name() + " : " + message + " : " + traceAppend;
 
             if (handler == handlers.CONSOLE) {
                 if(newline) System.out.println(message);
                 else System.out.print(message);
-            } else {
+            } else if (handler == handlers.FILE) {
                 try (FileWriter writer = new FileWriter(new File(logfile + '.' + currentLevel.name() + ".log"), true)) {
                     if(newline) writer.write(message + '\n');
                     else writer.write(message);
                     writer.flush();
                 } catch (IOException ex) {
+                    System.out.println("Произошла ошибка: " + ex.getMessage() + " при выводе логов: " + message);
+                }
+            } else {
+                try (Database db = new Database(logfile)) {
+                    Levels level = db.getLevelByLevelName(currentLevel.name());
+                    Messages logMessage = new Messages(level, bcpMessage, timestamp);
+                    Tracebacks traceback;
+                    logMessage = db.insertMessageAndReturnItInserted(logMessage);
+                    for (int i = 0; i < tracesToPrint; ++i) {
+                        traceback = new Tracebacks(logMessage, stackTraceElements[startIndex + i].toString());
+                        db.insertTraceback(traceback);
+                    }
+                } catch (SQLException ex) {
                     System.out.println("Произошла ошибка: " + ex.getMessage() + " при выводе логов: " + message);
                 }
             }

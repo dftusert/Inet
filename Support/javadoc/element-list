@@ -1,1 +1,4 @@
 com.user.support
+com.user.support.database
+com.user.support.database.configuration
+com.user.support.database.entity
